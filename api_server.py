@@ -71,7 +71,6 @@ def users(user_id):
     }
     if user.comment != '':
         r['user']['comment'] = user.comment
-
     return jsonify(r)
 
 
