@@ -6,6 +6,15 @@ from flask import request
 from sqlalchemy import exc
 
 db = SQLAlchemy()
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String, unique=True)
+    password = db.Column(db.String(20), nullable=False)
+    nickname = db.Column(db.String(80), nullable=True)
+    comment = db.Column(db.String(100), default='')
+
+    def __repr__(self):
+        return '<User %r>' % self.user_id
 
 def init_db(app):
     db.init_app(app)
@@ -22,25 +31,9 @@ app = create_app()
 app.app_context().push()
 db.create_all()
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.String, unique=True)
-    password = db.Column(db.String(20), nullable=False)
-    nickname = db.Column(db.String(80), nullable=True)
-    comment = db.Column(db.String(100), default='')
-
-    def __repr__(self):
-        return '<User %r>' % self.user_id
-
-
 @app.route('/')
 def hello_world():
-    from model import User
-    a = User.query.first()
-    return jsonify({
-        'id': a.id,
-        'name': a.username
-    })
+    return 'ok'
 
 
 def validation(json_data):
@@ -60,14 +53,16 @@ def signup():
             "user": data
         }, 200)
     except Exception as e:
-        return jsonify({
-            "message": "Account creation failed",
-            "cause": str(e)}, 400)
+        return jsonify(
+            {"message": "Account creation failed",
+             "cause": str(e)
+             }, 400)
 
 
 @app.route('/users/<string:user_id>')
 def users(user_id):
     user = User.query.filter_by(user_id=user_id).first()
+
     return 'users'
 
 
