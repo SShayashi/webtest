@@ -19,6 +19,8 @@ def create_app():
     return app
 
 app = create_app()
+app.app_context().push()
+db.create_all()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
