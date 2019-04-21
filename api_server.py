@@ -51,24 +51,39 @@ def signup():
         return jsonify({
             "message": "Account successfully created",
             "user": data
-        }, 200)
+        }), 200
     except Exception as e:
         return jsonify(
             {"message": "Account creation failed",
              "cause": str(e)
-             }, 400)
+             }), 400
 
 
 @app.route('/users/<string:user_id>')
 def users(user_id):
     user = User.query.filter_by(user_id=user_id).first()
+    r = {
+        "message": "User details by user_id",
+        "user": {
+            "user_id": user.user_id,
+            "nickname": user.nickname,
+        }
+    }
+    if user.comment != '':
+        r['user']['comment'] = user.comment
 
-    return 'users'
+    return jsonify(r)
 
 
 @app.route('/close')
 def close():
     return 'close'
+
+db.drop_all()
+db.create_all()
+test = User(user_id="TaroYamada", password="PaSSwd4TY", nickname="たろー", comment="僕は元気です")
+db.session.add(test)
+db.session.commit()
 
 if __name__ == '__main__':
     app.run()
